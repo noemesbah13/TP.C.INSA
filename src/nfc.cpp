@@ -23,6 +23,7 @@ struct Tag tag_read()
     return tag;
 }
 
+/*Renvoie vraie si les deux tags sont égaux*/
 bool tag_are_equals(struct Tag tag1, struct Tag tag2) {
     if (memcmp(&tag1, &tag2, sizeof(struct Tag)) == 0)      //verifie si les deux tags sont égaux
     {
@@ -34,10 +35,11 @@ bool tag_are_equals(struct Tag tag1, struct Tag tag2) {
     }
 }
 
-/* Cette fonction compare deux ba*/
+/* Cette fonction compare deux badges et fait clignoter la LED dans la couleur appropriée
+en fonction de la présence ou non du tag dans le tableau*/
 void test_badge(struct Tag Tab[])
 {
-    if (tag_present()) // véérifie si un badge est présent
+    if (tag_present()) // vérifie si un badge est présent
     {
         Tag newTag = tag_read();
         for (int i = 0;i<4;i++) {                   //parcours le tableau de tags connus
@@ -55,10 +57,8 @@ void test_badge(struct Tag Tab[])
     }
     else {
         led_set_color(ColorCyan);                   //pas de tag : fait clignoter la led en cyan
-        delay(500);
+        delay(250);
         led_set_color(ColorOff);
-        delay(500);
+        delay(250);
     }
 }
-    
-    //*/
