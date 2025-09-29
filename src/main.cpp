@@ -5,21 +5,26 @@
  */
 
 #include <Arduino.h>
+#include "led.h"
+#include "nfc.h"
+
+// pre-enregistre deux tags de reference pour tester s'il sont dans le tableau
+struct Tag tagVert = {{0xA3, 0x0F, 0x4F, 0x03}};
+struct Tag tagBleu = {{0x8A, 0xCC, 0x42, 0x16}};
+
+// cree le tableau pour stoker les tags
+struct Tag tab[4] = {
+    tagVert,
+    tagBleu,
+};
 
 void setup()
 {
-  // initialize LED digital pin as an output.
-  pinMode(LED_BUILTIN, OUTPUT);
+  led_init();
+  nfc_init();
 }
 
 void loop()
 {
-  // turn the LED on (HIGH is the voltage level)
-  digitalWrite(LED_BUILTIN, HIGH);
-  // wait for a second
-  delay(1000);
-  // turn the LED off by making the voltage LOW
-  digitalWrite(LED_BUILTIN, LOW);
-   // wait for a second
-  delay(1000);
+  test_badge(tab);
 }
