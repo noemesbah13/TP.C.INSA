@@ -88,7 +88,7 @@ void interface()
     switch (etat)
     {
         case attente:
-            lcd_print(1,"attendationnage");
+            afficherTime();
         break;
         case ouverture:
             lcd_print(1,"ouverture");
@@ -101,3 +101,26 @@ void interface()
         break;
     }
 }
+
+
+/*------------Gestion interface-------------------*/
+
+
+void ajoutUser(Tag tag)
+{
+    tagUser=tag;
+}
+void modifierAdmin(Tag tag)
+{
+    tag=tagNull;
+    lcd_print(0,"changez badge");
+}
+
+void menuAdmin()
+{
+    lcd_print(0,"chnager user");
+    lcd_print(1,"changer admin");
+    if ()
+}
+
+
