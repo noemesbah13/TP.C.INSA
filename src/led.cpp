@@ -1,7 +1,7 @@
 #include "led.h"
 
-#define LED_BLEUE 17
-#define LED_ROUGE 15
+#define LED_BLEUE 15
+#define LED_ROUGE 17
 #define LED_VERTE 16
 
 /*initialise les LED rouge et verte en LOW*/

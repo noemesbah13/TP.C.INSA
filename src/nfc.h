@@ -5,6 +5,17 @@
 Définition du type Tag, contenant les informations du badge présenté sur le
 lecteur NFC.
 */
+
+enum etat
+{
+    attente,
+    ouverture,
+    badgeInconnu,
+    menuAdmin
+};
+
+bool reconnait_badge_admin(struct Tag tag);
+
 struct Tag
 {
 byte uid[4];
@@ -40,3 +51,5 @@ au tableau passe en parametre et allume la led en vert s'il
 appartient et en rouge sinon.
 */
 void test_badge(struct Tag tab[]);
+
+void interface();
