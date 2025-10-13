@@ -2,12 +2,15 @@
 #include "led.h"
 #include "lcd.h"
 #include "rtc.h"
+#include "clavier.h"
 #include <Wire.h>
 #include <PN532_I2C.h>
 #include <PN532.h>
 #include <NfcAdapter.h>
 PN532_I2C pn532_i2c(Wire); //Objet correspondant au lecteur de carte I2C
 NfcAdapter nfc = NfcAdapter(pn532_i2c); //Object permettant d'accéder au lecteur I2C
+
+int menus=3;
 
 bool nfc_init()
 {
@@ -40,7 +43,7 @@ bool tag_are_equals(struct Tag tag1, struct Tag tag2) {
 const struct Tag tagNull = {0x00, 0x00, 0x00, 0x00};
 struct Tag tagAdmin = tagNull;
 struct Tag tagUser = tagNull;
-enum etat etat = attente;
+enum etat etat = demarage;
 
 bool reconnait_badge_admin(struct Tag tag)
 {
@@ -57,7 +60,7 @@ bool reconnait_badge_util(struct Tag tag)
 
 /* Cette fonction compare deux badges et fait clignoter la LED dans la couleur appropriée
 en fonction de la présence ou non du tag dans le tableau*/
-void test_badge(struct Tag Tab[])
+void test_badge()
 {
     if (tag_present()) // vérifie si un badge est présent
     {
@@ -69,17 +72,13 @@ void test_badge(struct Tag Tab[])
             led_set_color(ColorOff);
             return;
         }
-        etat = badgeInconnu;
-        led_set_color(ColorRed);                    //tag non reconnu dans le tableau : allume la led rouge
-        delay(1000);
-        led_set_color(ColorOff);
+        
     }
     else {
         led_set_color(ColorCyan);                   //pas de tag : fait clignoter la led en cyan
         delay(250);
         led_set_color(ColorOff);
         delay(250);
-        etat = attente;
     }
 }
 
@@ -91,36 +90,83 @@ void interface()
             afficherTime();
         break;
         case ouverture:
-            lcd_print(1,"ouverture");
+            lcd_print(0,"Ouverture");
+            lcd_print(1," ");
+            delay(5000);
+            etat=attente;
         break;
         case badgeInconnu:
-            lcd_print(1,"badge inconnu");
+            lcd_print(0,"Acess denied");
+            lcd_print(1," ");
+            led_set_color(ColorRed);                    //tag non reconnu dans le tableau : allume la led rouge
+            delay(1000);
+            led_set_color(ColorOff);
+            delay(1000);
+            etat=attente;
         break;
         case menuAdmin:
-            lcd_print(1,"admin");
+            Admin();
         break;
+        case demarage:
+            while (!tag_present())
+            {
+                lcd_print(0,"Presentez badge");
+                lcd_print(1,"admin");
+            }
+        tagAdmin=tag_read();
+        lcd_print(0,"Badge admin");
+        lcd_print(1,"enregistre");
+        delay(1000);
+        etat=attente;
+            
     }
 }
 
 
-/*------------Gestion interface-------------------*/
+/*-----------------Gestion interface-------------------*/
 
 
-void ajoutUser(Tag tag)
+void ajoutUser()
 {
-    tagUser=tag;
+    tagUser=tagNull;
+    lcd_print(0,"Presentez badge");
+    lcd_print(1,"utilisateur :");
+    float time=millis();
+    while (millis()<(time+4000))
+    {if (tag_present()){tagUser=tag_read();etat=attente;return;}}  
 }
-void modifierAdmin(Tag tag)
+void modifierAdmin()
 {
-    tag=tagNull;
-    lcd_print(0,"changez badge");
+    tagAdmin=tagNull;
+    lcd_print(0,"Presentez badge");
+    lcd_print(1,"admin :");
+    int time=millis();
+    while (millis()<(time+4000))
+    {if (tag_present()){tagUser=tag_read();etat=attente;return;}}
 }
 
-void menuAdmin()
+void Admin()
 {
-    lcd_print(0,"chnager user");
-    lcd_print(1,"changer admin");
-    if ()
+    while (etat==menuAdmin)
+    {
+    lcd_print(0,"User R | Heure U");
+    lcd_print(1,"Admin L | Exit D");
+    switch (clavier())
+    {
+        case droit:
+        lcd_print(1," ");
+        ajoutUser();
+        break;
+        case gauche:
+        lcd_print(1," ");
+        modifierAdmin();
+        break;
+        case bas:
+        etat=attente;
+        break;
+    }
+    }
+     
 }
 
 

@@ -9,6 +9,7 @@
 LiquidCrystal liquidcrystal(8, 9, 4, 5, 6, 7);
 static char buffer[COLUMN_COUNT +1];
 
+
 void lcd_init()
 {
     // set up the LCD's number of columns and rows:
@@ -36,9 +37,10 @@ void lcd_print(unsigned char row, const char * text)
 
 void afficherTime()
 {
+    static char buffer2[COLUMN_COUNT +1];
     DateTime now = rtc_get_current_time();
-    sprintf(buffer, "%02i/%02i/%04i", now.day(), now.month(), now.year());
-    lcd_print(0,buffer);
-    sprintf(buffer, "%02i:%02i:%02i", now.hour(), now.minute(), now.second());
-    lcd_print(1,buffer);
+    sprintf(buffer2, "%02i/%02i/%04i", now.day(), now.month(), now.year());
+    lcd_print(0,buffer2);
+    sprintf(buffer2, "%02i:%02i:%02i", now.hour(), now.minute(), now.second());
+    lcd_print(1,buffer2);
 }

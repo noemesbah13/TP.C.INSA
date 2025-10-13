@@ -11,7 +11,8 @@ enum etat
     attente,
     ouverture,
     badgeInconnu,
-    menuAdmin
+    menuAdmin,
+    demarage
 };
 
 bool reconnait_badge_admin(struct Tag tag);
@@ -50,6 +51,7 @@ Teste si le Tag qui passe devant le capteur NFC appartient
 au tableau passe en parametre et allume la led en vert s'il 
 appartient et en rouge sinon.
 */
-void test_badge(struct Tag tab[]);
+void test_badge();
 
 void interface();
+void Admin();

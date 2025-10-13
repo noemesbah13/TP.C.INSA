@@ -31,6 +31,6 @@ void setup()
 
 void loop()
 {
-  test_badge(tab);
+  test_badge();
   interface();
 }

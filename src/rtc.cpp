@@ -8,10 +8,10 @@ void rtc_init()
     {
         return;
     }
-    if (!rtcDevice.isrunning())
-    {
-        rtcDevice.adjust(DateTime(F(__DATE__), F(__TIME__)));
-    }
+    // if (!rtcDevice.isrunning())
+    // {
+    rtcDevice.adjust(DateTime(F(__DATE__), F(__TIME__)));
+    // }
 }
 
 DateTime rtc_get_current_time()
