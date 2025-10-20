@@ -15,6 +15,15 @@ enum etat
     demarage
 };
 
+/*enum page
+{
+    changeUser,
+    addUser,
+    changeAdmin,
+    time,
+    exit
+};*/
+
 bool reconnait_badge_admin(struct Tag tag);
 
 struct Tag

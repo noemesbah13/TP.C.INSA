@@ -10,6 +10,7 @@
 #include "clavier.h"
 #include "lcd.h"
 #include "rtc.h"
+#include "sd.h"
 
 // pre-enregistre deux tags de reference pour tester s'il sont dans le tableau
 struct Tag tagVert = {{0x48, 0xA7, 0x4F, 0x03}};

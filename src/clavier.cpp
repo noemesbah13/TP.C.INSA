@@ -18,6 +18,14 @@ enum touche clavier()
     oldPress = newPress; return newPress;
 }
 
+enum menu
+{
+    un,
+    deux,
+    trois,
+    quatre
+};
+
 void afficheLCD()
 {
     switch (clavier())

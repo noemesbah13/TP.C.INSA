@@ -2,6 +2,7 @@
 #include "led.h"
 #include "lcd.h"
 #include "rtc.h"
+#include "sd.h"
 #include "clavier.h"
 #include <Wire.h>
 #include <PN532_I2C.h>
@@ -10,7 +11,7 @@
 PN532_I2C pn532_i2c(Wire); //Objet correspondant au lecteur de carte I2C
 NfcAdapter nfc = NfcAdapter(pn532_i2c); //Object permettant d'accéder au lecteur I2C
 
-int menus=3;
+int menus=0;
 
 bool nfc_init()
 {
@@ -54,7 +55,7 @@ bool reconnait_badge_admin(struct Tag tag)
 
 bool reconnait_badge_util(struct Tag tag)
 {
-    if (tag_are_equals(tagUser, tag)) {etat = ouverture; return true;}
+    if (contient(tag)) {etat = ouverture; return true;}
     else {return false;}
 }
 
@@ -62,7 +63,7 @@ bool reconnait_badge_util(struct Tag tag)
 en fonction de la présence ou non du tag dans le tableau*/
 void test_badge()
 {
-    if (tag_present()) // vérifie si un badge est présent
+    if (tag_present()&& etat==attente) // vérifie si un badge est présent
     {
         Tag newTag = tag_read();                   //parcours le tableau de tags connus
         if (reconnait_badge_admin(newTag)||reconnait_badge_util(newTag))     //vérifie si le tag lu existe
@@ -72,6 +73,8 @@ void test_badge()
             led_set_color(ColorOff);
             return;
         }
+        else {etat=badgeInconnu;}
+        
         
     }
     else {
@@ -126,14 +129,40 @@ void interface()
 /*-----------------Gestion interface-------------------*/
 
 
-void ajoutUser()
+void manageUser()
 {
     tagUser=tagNull;
     lcd_print(0,"Presentez badge");
     lcd_print(1,"utilisateur :");
     float time=millis();
     while (millis()<(time+4000))
-    {if (tag_present()){tagUser=tag_read();etat=attente;return;}}  
+        {if (tag_present())
+        {
+            if (tag_are_equals(tag_read(),tagAdmin))
+            {
+                lcd_print(0, "Badge deja");
+                lcd_print(1,"administrateur !");
+                delay(1000);
+                etat=menuAdmin;
+            }
+            else if (contient(tag_read()))
+            {
+                supprimer(tag_read());
+                lcd_print(0,"Badge supprime !");
+                lcd_print(1," ");
+                delay(1000);
+                etat=menuAdmin;
+            }
+            else {
+                ajouter(tag_read());
+                lcd_print(0,"Badge ajoute !");
+                lcd_print(1," ");
+                delay(1000);
+                etat=menuAdmin;
+                return;
+            }
+        }
+    }  
 }
 void modifierAdmin()
 {
@@ -142,20 +171,47 @@ void modifierAdmin()
     lcd_print(1,"admin :");
     int time=millis();
     while (millis()<(time+4000))
-    {if (tag_present()){tagUser=tag_read();etat=attente;return;}}
+    {if (tag_present()){supprimer(tagAdmin);tagAdmin=tag_read();ajouter(tagAdmin);etat=attente;return;}}
 }
 
 void Admin()
 {
-    while (etat==menuAdmin)
+    /*while (etat==menuAdmin)
     {
+        switch (clavier()){}
+            case gauche:
+            menus+=1;
+            break;
+            case droit:
+            menus-=1;
+            break;}
+    }
+
+    switch (enum menu)
+    {
+    case 0:
+    lcd_print(0,"Gerer user");
+    lcd_print(1,"1/4");
+    break;
+    case 1:
+    lcd_print(0,"Changer Heure");
+    lcd_print(1,"2/4");
+    break;
+    case 3:
+    lcd_print(0,"Changer admin");
+    lcd_print(1,"3/4");
+    break;
+    lcd_print(0,"Exit");
+    lcd_print(1,"4/4");
+    break;
+    }*/
     lcd_print(0,"User R | Heure U");
     lcd_print(1,"Admin L | Exit D");
     switch (clavier())
     {
         case droit:
         lcd_print(1," ");
-        ajoutUser();
+        manageUser();
         break;
         case gauche:
         lcd_print(1," ");
@@ -165,7 +221,7 @@ void Admin()
         etat=attente;
         break;
     }
-    }
+    
      
 }
 
