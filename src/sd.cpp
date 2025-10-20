@@ -14,6 +14,7 @@ struct element
 
 struct element* racine = nullptr;
 
+extern struct Tag tagAdmin;
 
 
 void ajouter(Tag tag)
@@ -93,4 +94,76 @@ int taille()
         courant = courant->suivant;
     }
     return taille;
+}
+
+
+// programme du tp 
+
+/*
+Objet permettant l'accès à la carte SD
+*/
+SdCard card;
+/*
+Object permettant de lire et écrire sur la carte SD
+*/
+Fat16 file;
+/*
+Nom du fichier contenant les données sur la carte SD
+*/
+const static char TAG_FILENAME[] = "data.bin";
+
+/*
+Initialise la carte SD
+Cette fonction doit être appelée dans la fonction setup
+*/
+bool sd_init()
+{
+    if (!card.begin(4)) {return false;}
+    if (!Fat16::init(&card)) {return false;}
+    return true;
+}
+
+/*
+Lit les données depuis la carte SD
+*/
+void sd_load()
+{
+    if (!file.open(TAG_FILENAME, O_READ)) {/*impossible d'ouvrir le fichier*/return;}
+    /* Lecture d'un tag*/
+    struct Tag tag;
+    if(file.read(tag.uid, 4)==4)
+    {
+        /*lecture OK*/
+        tagAdmin = tag;
+    }
+
+    while(file.read(tag.uid, 4)==4)
+    {
+        ajouter(tag);
+    }   
+
+    //Ne pas oublier de fermer le fichier
+    file.close();
+}
+
+
+/*
+Écrit les données sur la carte SD
+*/
+void sd_save()
+{
+    Fat16::remove(TAG_FILENAME);
+    if (!file.open(TAG_FILENAME, O_CREAT | O_WRITE)) {return;/*impossible d'ouvrir le fichier en écriture*/}
+    /* Écriture d'un tag*/
+    struct Tag tag;
+    if(file.write(tagAdmin.uid, 4)!=4) {
+        file.close(); /*impossible d'enregistrer les données*/
+        return;
+    } 
+    struct element* courant = racine;
+    while (courant!=nullptr){
+        if (file.write((courant->tag.uid,4)==4))
+    }
+    //Ne pas oublier de fermer le fichier
+    file.close();
 }

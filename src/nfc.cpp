@@ -12,6 +12,7 @@ PN532_I2C pn532_i2c(Wire); //Objet correspondant au lecteur de carte I2C
 NfcAdapter nfc = NfcAdapter(pn532_i2c); //Object permettant d'accéder au lecteur I2C
 
 int menus=0;
+int menu=0;
 
 bool nfc_init()
 {
@@ -176,18 +177,19 @@ void modifierAdmin()
 
 void Admin()
 {
-    /*while (etat==menuAdmin)
+    while (etat==menuAdmin)
     {
-        switch (clavier()){}
+        switch (clavier()){
             case gauche:
             menus+=1;
             break;
             case droit:
             menus-=1;
             break;}
+        menu=menus%4;
     }
 
-    switch (enum menu)
+    /*switch (menu)
     {
     case 0:
     lcd_print(0,"Gerer user");
@@ -206,21 +208,23 @@ void Admin()
     break;
     }*/
     lcd_print(0,"User R | Heure U");
-    lcd_print(1,"Admin L | Exit D");
-    switch (clavier())
+    lcd_print(1,"Admin L | Exit D");/*
+    if (clavier()==select){
+    switch (page)
     {
-        case droit:
+        case un:
         lcd_print(1," ");
         manageUser();
         break;
-        case gauche:
+        case trois:
         lcd_print(1," ");
         modifierAdmin();
         break;
-        case bas:
+        case quatre:
         etat=attente;
         break;
     }
+    }*/
     
      
 }
